@@ -1,2 +1,72 @@
 # grok
-Grok (via xAI's API) for text completion, editing, and interactive chat.
+Grok integrated via xAI's API for text completion, editing, and interactive chat. The plugin will:
+
+- Support commands for text completion (`:GrokComplete`), editing (`:GrokEdit`), and chat (`:GrokChat`).
+- Use an API key for authentication, stored securely in a Vim variable.
+- Allow users to select text in visual mode for context-aware API calls.
+- Display responses in a new buffer or replace selected text.
+- Be compatible with Vim and Neovim, using Python for HTTP requests.
+
+
+Since xAI's API specifics (endpoint, request format) aren't fully public, I'll use a placeholder endpoint and generic JSON structure, which you can adapt once you have API access. The plugin assumes the API requires a Bearer token and accepts a `prompt` field, returning a `response` field.
+
+
+" Instructions for user
+echom "Grok Plugin loaded. Set key with :SetGrokApiKey <key>. Use <Leader>gc (complete), <Leader>ge (edit), <Leader>gt (chat)"
+```
+
+### How to Use the Plugin
+
+1. **Install the Plugin**:
+   - Save the code in `~/.vim/plugged/grok/plugin/grok.vim` (or use a plugin manager like Vim-Plug: `Plug 'your-repo/grok'`).
+   - Ensure Vim has Python 3 support (`:echo has('python3')` should return `1`).
+
+2. **Configure the API**:
+   - Obtain an API key from xAI (visit https://x.ai/api for details).
+   - Set the API key in Vim:
+     ```
+     :SetGrokApiKey your-api-key-here
+     ```
+   - Update the endpoint in your `.vimrc` if needed:
+     ```vim
+     let g:grok_api_endpoint = 'https://api.x.ai/v1/grok'
+     ```
+
+3. **Usage**:
+   - **Text Completion (`:GrokComplete`)**:
+     - Select text in visual mode (optional) for context.
+     - Run `:GrokComplete <prompt>` or press `<Leader>gc` (default `\gc`).
+     - The response appends below the cursor or current line.
+   - **Text Editing (`:GrokEdit`)**:
+     - Select text in visual mode.
+     - Run `:GrokEdit <prompt>` (e.g., `:GrokEdit fix grammar`) or press `<Leader>ge`.
+     - The selected text is replaced with the API response.
+   - **Chat (`:GrokChat`)**:
+     - Run `:GrokChat <prompt>` or press `<Leader>gt`.
+     - Responses appear in a `GrokChat` buffer (markdown filetype) with prompt history.
+   - Example:
+     ```
+     :GrokComplete Write a Python function to reverse a string
+     :GrokEdit Refactor this code to be more concise
+     :GrokChat Explain how Vim's undo tree works
+     ```
+
+4. **Customization**:
+   - Change mappings in your `.vimrc`:
+     ```vim
+     vnoremap <C-g>c :GrokComplete<CR>
+     vnoremap <C-g>e :GrokEdit<CR>
+     nnoremap <C-g>t :GrokChat<CR>
+     ```
+   - Modify the Python code to match xAI's API format (e.g., adjust `body` or response parsing).
+   - Add custom roles (e.g., `:GrokEdit /grammar`) by extending the plugin with a role configuration file, similar to `vim-ai`.[](https://github.com/madox2/vim-ai)
+
+### Notes
+- The plugin is modeled after `vim-ai`, supporting similar commands (`:AI`, `:AIEdit`, `:AIChat`) but tailored for Grok.[](https://github.com/madox2/vim-ai)[](https://www.vim.org/scripts/script.php?script_id=6048)
+- The API endpoint and request format are placeholders. Update them based on xAI's API documentation (https://x.ai/api).
+- The plugin requires an internet connection and Python 3. It sends only the selected text and prompt to the API, ensuring minimal data sharing.[](https://github.com/madox2/vim-ai)
+- For local models or open-source alternatives, consider using an OpenAI-compatible proxy like OpenRouter, as suggested in `vim-ai` documentation.[](https://github.com/madox2/vim-ai)
+- Error handling covers missing API keys, empty prompts, and API failures.
+- The chat buffer uses markdown for readability, with Treesitter support for syntax highlighting if installed.[](https://www.reddit.com/r/neovim/comments/15zm24u/have_any_of_the_ai_plugins_stuck_with_you/)
+
+If you have access to xAI's API specifics or want to add features (e.g., custom roles, streaming responses), let me know, and I can refine the plugin further!
